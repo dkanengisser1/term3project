@@ -138,7 +138,7 @@ public class term3project {
         for (int i = 0; i < shorter.getNumberOfFollowers(); i++) {
             for (int j = 0; j < shorter.getFollower(i).getNumberOfFollowers(); j++) {
                 if (this.checkInList(listOfFofF, shorter.getFollower(i).getFollower(j)) == false
-                        && this.checkinfollower(shorter.getFollower(i).getFollower(j)) == false) {
+                        && this.checkinfollower(shorter.getFollower(i).getFollower(j),shorter) == false) {
                     int k = 0;
                     while (listOfFofF[k] != null) {
                         k++;
@@ -156,11 +156,11 @@ public class term3project {
         return returnValue;
     }
 
-    public boolean checkinfollower(Account check) {
-        for (int i = 0; i < this.arrayOfAccounts[0].getNumberOfFollowers(); i++) {
-            if (check == this.arrayOfAccounts[0].getFollower(i)) {
+    public boolean checkinfollower(Account check,Account compare) {
+        for (int i = 0; i < compare.getNumberOfFollowers(); i++) {
+            if (check == compare.getFollower(i)) {
                 return true;
-            } else if (check == this.arrayOfAccounts[0]) {
+            } else if (check == compare) {
                 return true;
             }
         }
@@ -168,8 +168,8 @@ public class term3project {
     }
 
     public boolean checkInList(String[] list, Account check) {
-        for (int i = 0; i < list.length; i++) {
-            if (list[i] == check.getName()) {
+        for (String name : list) {
+            if (name != null && name.equals(check.getName().trim())) {
                 return true;
             }
         }
@@ -217,64 +217,50 @@ public class term3project {
         int i=0;
         Account temp=this.arrayOfAccounts[i];
         while(temp!=null){
-            Account [] listOfProp=new Account[100];
-            for (int j=0;j<temp.getNumberOfFollowers();j++){
-                Account newTemp=temp.getFollower(j);
-                if (this.checkForRepeat(listOfProp,this.getLengthOfArrayAccount(listOfProp),newTemp)==false && this.checkForRepeat(listOfProp, this.getLengthOfArrayAccount(listOfProp), temp)==false){
-                    listOfProp[this.getLengthOfArrayAccount(listOfProp)]=newTemp;
-                }
-                for (int k=0;k<newTemp.getNumberOfFollowers();k++){
-                    if (this.checkForRepeat(listOfProp,this.getLengthOfArrayAccount(listOfProp),newTemp.getFollower(k))==false&& this.checkForRepeat(listOfProp, this.getLengthOfArrayAccount(listOfProp), temp)==false){
-                        listOfProp[this.getLengthOfArrayAccount(listOfProp)]=newTemp.getFollower(k);
+        String[] listOfFofF = new String[100];
+        for (int x = 0; x < temp.getNumberOfFollowers(); x++) {
+            if (this.checkInList(listOfFofF, temp.getFollower(x)) == false && temp.getFollower(x)!=temp && this.checkinfollower(temp.getFollower(x),temp)==false){
+            int k=0;
+            while (listOfFofF[k]!=null){
+                k++;
+            }
+            
+                listOfFofF[k]=temp.getFollower(x).getName().trim();
+            }
+            for (int j = 0; j < temp.getFollower(x).getNumberOfFollowers(); j++) {
+                if (this.checkInList(listOfFofF, temp.getFollower(x).getFollower(j)) == false && temp.getFollower(x).getFollower(j)!=temp) {
+                    int k = 0;
+                    while (listOfFofF[k] != null) {
+                        k++;
                     }
+                    listOfFofF[k] = temp.getFollower(x).getFollower(j).getName().trim();
+                }
             }
         }
+        
 
-
-            if (this.getLengthOfArrayAccount(listOfProp)>highestNumber){
-                highestNumber=this.getLengthOfArrayAccount(listOfProp);
+        int lengthOf=0;
+        while(listOfFofF[lengthOf]!=null){
+            lengthOf++;
+        }
+        if(highestNumber<lengthOf){
+            highestNumber=lengthOf;
+            highestAccount=temp.getName().trim();
+            for (int a=0;a<lengthOf;a++){
+            }
+        }
+        else if(highestNumber==lengthOf){
+            if(highestAccount.compareTo(temp.getName().trim())<=1){
                 highestAccount=temp.getName().trim();
+
             }
-            else if(this.getLengthOfArrayAccount(listOfProp)==highestNumber){
-                if (highestAccount.compareTo(temp.getName().trim())>=1){
-                    highestNumber=this.getLengthOfArrayAccount(listOfProp);
-                    highestAccount=temp.getName().trim();
-                }
-            }
-            i++;
-            temp=this.arrayOfAccounts[i];
+        }
+                i++;
+        temp=this.arrayOfAccounts[i];
         }
         return highestAccount;
     }
-    public int getLengthOfArrayAccount(Account[] list){
-        int i=0;
-        int count=0;
-        while(list[i]!=null){
-            count++;
-            i++;
-        }
-        return count;
-    }
-    public Account[] addToList(Account[] list,Account input,int position){
-        for(int i=0;i<input.getNumberOfFollowers();i++){
-            if (this.checkForRepeat(list,position,input.getFollower(i))==false){}
-            list[position]=input.getFollower(i);
-            list=this.addToList(list,input.getFollower(i),position+1);
-            position=0;
-            while(list[position]!=null){
-                position++;
-            }
-        }
-        return list;
-    }
-    public boolean checkForRepeat(Account[] list,int length,Account check){
-        for(int i=0;i<length;i++){
-            if(check==list[i]){
-                return true;
-            }
-        }
-        return false;
-    } 
+
 
     public static void main(String[] args) {
         try {
@@ -325,12 +311,12 @@ public class term3project {
             file.close();
             inputFile.close();
             main.addFollowingToAccount();
-            System.out.println("Task 1: " + main.task1());
-            System.out.println("Task 2: " + main.task2());
-            System.out.println("Task 3: " + main.task3());
-            System.out.println("Task 4: " + main.task4());
-            System.out.println("Task 5: " + main.task5());
-            System.out.println("Task 6: " + main.task6());
+            System.out.println("Task 1: The density of the network is " + main.task1());
+            System.out.println("Task 2: The account with the most followers is " + main.task2());
+            System.out.println("Task 3: The account with following the most is " + main.task3());
+            System.out.println("Task 4: The first account has " + main.task4()+" at 2 degrees of seperation");
+            System.out.println("Task 5: The median value of followers is " + main.task5());
+            System.out.println("Task 6: The best account for advertising is " + main.task6());
         } catch (FileNotFoundException fnfe) {
             System.out.println("NO Such File Exists");
         } catch (IOException except) {
